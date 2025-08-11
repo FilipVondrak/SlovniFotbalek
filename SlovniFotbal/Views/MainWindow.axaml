@@ -3,9 +3,14 @@
         xmlns:vm="using:SlovniFotbal.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:views="clr-namespace:SlovniFotbal.Views"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
         x:Class="SlovniFotbal.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        x:CompileBindings="True"
+        Width="400"
+        Height="600"
+        WindowStartupLocation="CenterScreen"
         Icon="/Assets/avalonia-logo.ico"
         Title="SlovniFotbal">
 
@@ -15,6 +20,8 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <TransitioningContentControl>
+        <views:StartScreen/>
+    </TransitioningContentControl>
 
 </Window>
