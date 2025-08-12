@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SlovniFotbal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:DataType="vm:GameWindowViewModel"
+             x:CompileBindings="True"
+             x:Class="SlovniFotbal.Views.GameScreen">
+    <Grid RowDefinitions="Auto, Auto, *,Auto, Auto">
+        <!-- Control buttons -->
+        <Grid ColumnDefinitions="*, *">
+            <Grid.Styles>
+                <Style Selector="Button">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                    <Setter Property="Height" Value="30"/>
+                </Style>
+                <Style Selector="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </Grid.Styles>
+            
+            <Button Grid.Column="0"><TextBlock>Uložit hru</TextBlock></Button>
+            <Button Grid.Column="1" Command="{Binding CloseCommand}"><TextBlock>Ukončit hru</TextBlock></Button>
+        </Grid>
+        
+        <!-- Timer and player -->
+        <Border Grid.Row="1" BorderThickness="0 0 0 2" BorderBrush="Black">
+            <Grid ColumnDefinitions="*, *, 12, Auto, 12, *, *" Margin="5">
+                <TextBlock Grid.Column="1">Zbývá: 00:30</TextBlock>
+                <TextBlock Grid.Column="3">|</TextBlock>
+                <TextBlock Grid.Column="5" Text="{Binding ActivePlayer}"/>
+            </Grid>
+        </Border>
+        
+        <!-- messages -->
+        <ItemsControl Grid.Row="2" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Bottom"
+                    Margin="10 0 10 10"
+                    ItemsSource="{Binding Messages}">
+            <ItemsControl.Styles>
+                <Style Selector="Border">
+                    <Setter Property="Padding" Value="4"/>
+                    <Setter Property="CornerRadius" Value="6"/>
+                    
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="FontSize" Value="16"/>
+                    </Style>
+                    
+                    <Style Selector="^:nth-child(2n)">
+                        <Setter Property="Background" Value="LightCoral"/>
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                    </Style>
+                    
+                    <Style Selector="^:nth-child(2n-1)">
+                        <Setter Property="Background" Value="LightBlue"/>
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                    </Style>
+                </Style>
+            </ItemsControl.Styles>
+            
+        </ItemsControl>
+        
+        <!-- separator -->
+        <Separator Grid.Row="3"/>
+        
+        <!-- User input -->
+        <Grid ColumnDefinitions="*, 5, Auto" Grid.Row="4" Margin="5">
+            <TextBox Grid.Column="0" Text="{Binding NewWord}"/>
+            <Button Grid.Column="2" VerticalAlignment="Stretch" 
+                    Command="{Binding SendCommand}">Odeslat</Button>
+        </Grid>
+    </Grid>
+</UserControl>

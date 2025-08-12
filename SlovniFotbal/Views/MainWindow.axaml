@@ -20,8 +20,7 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TransitioningContentControl>
-        <views:StartScreen/>
-    </TransitioningContentControl>
+    <TransitioningContentControl 
+        Content="{Binding CurrentContent}"/>
 
 </Window>
