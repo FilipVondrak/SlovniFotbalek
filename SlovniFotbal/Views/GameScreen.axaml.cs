@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -9,13 +10,28 @@ public partial class GameScreen : UserControl
 {
     public GameScreen()
     {
-        
-    }
-    
-    public GameScreen(MainWindowViewModel main, GameType gameType)
-    {
-        this.DataContext = new GameWindowViewModel(main, gameType);
         InitializeComponent();
     }
+    
+    public GameScreen(MainWindowViewModel main, Game game)
+    {
+        InitializeComponent();
+        this.DataContext = new GameScreenViewModel(main, game);
+        var vm = (GameScreenViewModel) DataContext;
+        vm.Messages.CollectionChanged += MessageAdded;
+    }
 
+    private void MessageAdded(object? sender, EventArgs e) => ScrollViewer.ScrollToEnd();
+    
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+
+        if (DataContext is GameScreenViewModel vm)
+        {
+            vm.Messages.CollectionChanged -= MessageAdded;
+            vm.Dispose();
+            DataContext = null;
+        }
+    }
 }
