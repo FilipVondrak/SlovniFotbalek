@@ -16,14 +16,9 @@ public partial class MainWindowViewModel : ViewModelBase
         _startScreen.DataContext = new StartScreenViewModel(this);
     }
 
-    public void StartGame(GameScreen gameScreen) => CurrentContent = _gameScreen = gameScreen;
-    public void BackToStartScreen()
-    {
-        CurrentContent = _startScreen;
-        this._gameScreen = null;
-    }
+    public void StartGame(GameScreen gameScreen) => CurrentContent = gameScreen;
+    public void BackToStartScreen() => CurrentContent = _startScreen;
 
-    private GameScreen _gameScreen;
     private readonly StartScreen _startScreen = new();
     
     [ObservableProperty] private UserControl _currentContent;

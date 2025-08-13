@@ -2,7 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SlovniFotbal.ViewModels"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:DataType="vm:StartScreenViewModel"
+             x:CompileBindings="True"
              x:Class="SlovniFotbal.Views.StartScreen">
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -24,7 +27,7 @@
             </TextBlock>
             
             <!-- Buttons for selecting game mode -->
-            <Button HorizontalAlignment="Center">
+            <Button HorizontalAlignment="Center" Margin="0 0 0 5" Command="{Binding StartTwoPlayersCommand}">
                 <TextBlock>Režim 2 hráčů</TextBlock>
             </Button>
             <Button HorizontalAlignment="Center">
@@ -33,8 +36,8 @@
             
             <Border>
                 <StackPanel>
-                    <Border Background="Black" BorderThickness="2" Margin="14"/>
-                    <Button HorizontalAlignment="Center">
+                    <Border Background="Black" BorderThickness="1" Margin="14"/>
+                    <Button HorizontalAlignment="Center" Command="{Binding LoadGameCommand}">
                         <TextBlock HorizontalAlignment="Center" Margin="0 0 0 0">
                             Načíst uloženou hru
                         </TextBlock>
