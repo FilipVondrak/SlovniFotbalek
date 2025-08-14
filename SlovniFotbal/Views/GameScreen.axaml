@@ -115,7 +115,12 @@
                     </Style>
                 </Grid.Styles>
                 <Border Grid.Column="0" Background="LightGray" CornerRadius="10">
-                    <TextBox Text="{Binding NewWord}"/>
+                    <TextBox Text="{Binding NewWord}">
+                        <TextBox.KeyBindings>
+                            <KeyBinding Command="{Binding SendCommand}"
+                                        Gesture="Enter" />
+                        </TextBox.KeyBindings>
+                    </TextBox>
                 </Border>
                 <Button Grid.Column="2" VerticalAlignment="Stretch" IsEnabled="{Binding InputAllowed}" 
                         CornerRadius="10" Background="DarkGray" 
