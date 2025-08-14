@@ -6,6 +6,7 @@ using System.Timers;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
 
 namespace SlovniFotbal.ViewModels;
 
@@ -35,6 +36,7 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
     private int _playerNumber = 1;
     private readonly MainWindowViewModel _mainWindow;
     private readonly GameType _gameType;
+    private char? _lastChar = null;
     private readonly Timer _timer;
     private readonly ElapsedEventHandler _decreaseSeconds;
     
@@ -109,10 +111,26 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
         _timer.Start();
     }
     
-    private void AddMessage(string message)
+    private async void AddMessage(string message)
     {
-        if (!string.IsNullOrWhiteSpace(message))
-            Messages.Add(message);
+        if (string.IsNullOrWhiteSpace(message))
+            return;
+        
+        if(message.Last() != _lastChar && _lastChar != null)
+            return;
+
+        using (var db = new WordContext())
+        {
+            var word = message.ToLower().Trim();
+            bool exists = await db.Words.AnyAsync(w => w.Word == word);
+            if (exists)
+            {
+                _lastChar = message.Last();
+                Messages.Add(message);
+            }
+        }
+        
+        //Messages.Add(message);
     }
 }
 
