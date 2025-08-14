@@ -117,7 +117,8 @@
                 <Border Grid.Column="0" Background="LightGray" CornerRadius="10">
                     <TextBox Text="{Binding NewWord}"/>
                 </Border>
-                <Button Grid.Column="2" VerticalAlignment="Stretch" CornerRadius="10" Background="DarkGray" 
+                <Button Grid.Column="2" VerticalAlignment="Stretch" IsEnabled="{Binding InputAllowed}" 
+                        CornerRadius="10" Background="DarkGray" 
                         Command="{Binding SendCommand}">Odeslat</Button>
             </Grid>
         </Border>

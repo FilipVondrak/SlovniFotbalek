@@ -30,7 +30,7 @@
             <Button HorizontalAlignment="Center" Margin="0 0 0 5" Command="{Binding StartTwoPlayersCommand}">
                 <TextBlock>Režim 2 hráčů</TextBlock>
             </Button>
-            <Button HorizontalAlignment="Center">
+            <Button HorizontalAlignment="Center" Command="{Binding StartPlayerVsComputerCommand}">
                 <TextBlock>Režim hráč vs počítač</TextBlock>
             </Button>
             

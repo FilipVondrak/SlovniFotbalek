@@ -24,6 +24,14 @@ public partial class StartScreenViewModel : ViewModelBase
     }
     
     [RelayCommand]
+    private void StartPlayerVsComputer()
+    {
+        var gameSettings = new Game(mode: GameType.PlayerVsComputer);
+        var game = new GameScreen(_mainWindow, gameSettings);
+        _mainWindow.StartGame(game);
+    }
+    
+    [RelayCommand]
     private async void LoadGame()
     {
         Game? gameSettings = null;
