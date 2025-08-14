@@ -77,6 +77,7 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
         this.Seconds = game.Seconds;
         this._playerNumber = game.ActivePlayerNumber;
         this._gameType = game.Mode;
+        this.LastChar = game.LastChar;
         
         // loads the messages
         if (game.Messages != null && game.Messages.Count > 0)
@@ -138,7 +139,7 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
     }
 
     [RelayCommand]
-    private async void Save()
+    private async Task Save()
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
         var topLevel = TopLevel.GetTopLevel(_view);
@@ -152,12 +153,12 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
         if(file is null)
             return;
         
-        var game = new Game(messages: Messages.ToList(), activePlayerNumber: _playerNumber, seconds: Seconds, mode: _gameType);
+        var game = new Game(messages: Messages.ToList(), activePlayerNumber: _playerNumber, seconds: Seconds, mode: _gameType, lastChar: LastChar);
         await GameSerializer.SerializeGame(game, file);
     }
 
     [RelayCommand]
-    private async void Send(string input = "")
+    private async Task Send(string input = "")
     {
         _timer.Stop();
         
@@ -189,7 +190,7 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
             InputAllowed = false;
             Seconds = 30;
             _timer.Start();
-            AiSendMessage();
+            await AiSendMessage();
         }
     }
 
@@ -208,6 +209,9 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
                 .Where(w => w.Word.StartsWith(LastChar.ToString()!.ToLower()))
                 // checks if the word hasnt been used yet
                 .Where(w => !Messages.Contains(w.Word))
+                // makes sure the player has a chance by banning words endind with 'í' and 'ý'
+                .Where(w => w.Word.Substring(w.Word.Length - 1, 1) != "ý" &&
+                            w.Word.Substring(w.Word.Length - 1, 1) != "í")
                 // randomizes the words
                 .OrderBy(w => EF.Functions.Random()) // SQLite random order
                 // only keeps the word string
@@ -222,7 +226,7 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
                 return;
             }
             
-            Send(word);
+            await Send(word);
         }
     }
 

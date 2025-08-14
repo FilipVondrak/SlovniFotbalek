@@ -27,6 +27,9 @@ public static class GameSerializer
     {
         var topLevel = TopLevel.GetTopLevel(screen);
         
+        if  (topLevel == null)
+            throw new Exception("No top level found");
+        
         // Start async operation to open the dialog.
         var file = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -44,6 +47,6 @@ public static class GameSerializer
         var fileContent = await streamReader.ReadToEndAsync();
         
         // loads game save from json or creates a default game
-        return JsonSerializer.Deserialize<Game>(fileContent);
+        return JsonSerializer.Deserialize<Game>(fileContent) ?? throw new Exception("No file found");
     }
 }

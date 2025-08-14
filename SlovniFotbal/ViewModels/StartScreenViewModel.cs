@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -34,7 +35,7 @@ public partial class StartScreenViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private async void LoadGame()
+    private async Task LoadGame()
     {
         Game? gameSettings = null;
 
