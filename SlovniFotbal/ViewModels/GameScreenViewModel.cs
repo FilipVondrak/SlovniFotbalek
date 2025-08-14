@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using SlovniFotbal.Models;
+using SlovniFotbal.Views;
 
 namespace SlovniFotbal.ViewModels;
 
@@ -34,6 +37,7 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
     private readonly Timer _errorTimer;
     private readonly ElapsedEventHandler _displayErrorMessage;
     private int _seconds = 30;
+    private readonly GameScreen _view;
 
     public int Seconds
     {
@@ -64,9 +68,10 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
         }
     }
     
-    public GameScreenViewModel(MainWindowViewModel mainWindow, Game game)
+    public GameScreenViewModel(MainWindowViewModel mainWindow, Game game, GameScreen view)
     {
         this._mainWindow = mainWindow;
+        this._view = view;
         
         // load the game
         this.Seconds = game.Seconds;
@@ -133,10 +138,22 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
     }
 
     [RelayCommand]
-    private void Save()
+    private async void Save()
     {
+        // Get top level from the current control. Alternatively, you can use Window reference instead.
+        var topLevel = TopLevel.GetTopLevel(_view);
+
+        // Start async operation to open the dialog.
+        IStorageFile file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save Text File"
+        });
+
+        if(file is null)
+            return;
+        
         var game = new Game(messages: Messages.ToList(), activePlayerNumber: _playerNumber, seconds: Seconds, mode: _gameType);
-        GameSerializer.SerializeGame(game, "game");
+        await GameSerializer.SerializeGame(game, file);
     }
 
     [RelayCommand]

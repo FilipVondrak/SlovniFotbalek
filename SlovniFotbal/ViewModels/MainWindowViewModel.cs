@@ -12,14 +12,15 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     public MainWindowViewModel()
     {
+        _startScreen = new();
         _currentContent = _startScreen;
-        _startScreen.DataContext = new StartScreenViewModel(this);
+        _startScreen.DataContext = new StartScreenViewModel(this, _startScreen);
     }
 
     public void StartGame(GameScreen gameScreen) => CurrentContent = gameScreen;
     public void BackToStartScreen() => CurrentContent = _startScreen;
 
-    private readonly StartScreen _startScreen = new();
+    private readonly StartScreen _startScreen;
     
     [ObservableProperty] private UserControl _currentContent;
 }

@@ -16,7 +16,7 @@ public partial class GameScreen : UserControl
     public GameScreen(MainWindowViewModel main, Game game)
     {
         InitializeComponent();
-        this.DataContext = new GameScreenViewModel(main, game);
+        this.DataContext = new GameScreenViewModel(main, game, this);
         var vm = (GameScreenViewModel) DataContext;
         vm.Messages.CollectionChanged += MessageAdded;
     }

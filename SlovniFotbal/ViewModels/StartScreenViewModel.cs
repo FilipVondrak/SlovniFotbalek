@@ -9,9 +9,11 @@ namespace SlovniFotbal.ViewModels;
 public partial class StartScreenViewModel : ViewModelBase
 {
     private MainWindowViewModel _mainWindow;
+    private StartScreen _startScreen;
     
-    public StartScreenViewModel(MainWindowViewModel mainWindow)
+    public StartScreenViewModel(MainWindowViewModel mainWindow, StartScreen startScreen)
     {
+        _startScreen = startScreen;
         _mainWindow = mainWindow;
     }
     
@@ -38,7 +40,7 @@ public partial class StartScreenViewModel : ViewModelBase
 
         try
         {
-            gameSettings = GameSerializer.DeserializeGame();
+            gameSettings = await GameSerializer.DeserializeGame(_startScreen);
         }
         catch (Exception e)
         {
