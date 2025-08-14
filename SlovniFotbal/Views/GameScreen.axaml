@@ -39,6 +39,33 @@
             </Grid>
         </Border>
         
+        <!-- last character display -->
+        <Grid Grid.Row="2" RowDefinitions="*,Auto, *">
+            <Border Grid.Row="0">
+                <Border Background="LightGreen" VerticalAlignment="Top" HorizontalAlignment="Center" 
+                        Margin="0 16 0 0" 
+                        Padding="6" CornerRadius="12">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Poslední písmenko: " />
+                        <TextBlock Text="{Binding LastChar}"/>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </Grid>
+        
+        <Grid Grid.Row="2">
+            <Border HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" 
+                    Background="LightCoral"
+                    Padding="6"
+                    BorderThickness="2"
+                    BorderBrush="Red"
+                    CornerRadius="12"
+                    IsVisible="{Binding ErrorVisible}">
+                <TextBlock Text="{Binding ErrorText}"/>
+            </Border>
+        </Grid>
+        
         <!-- messages -->
         <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" x:Name="ScrollViewer">
             <ItemsControl 

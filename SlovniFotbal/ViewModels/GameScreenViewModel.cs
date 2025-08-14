@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,9 +14,20 @@ namespace SlovniFotbal.ViewModels;
 public partial class GameScreenViewModel : ViewModelBase, IDisposable
 {
     [ObservableProperty] private ObservableCollection<string> _messages = new();
-    [ObservableProperty] private string _newWord;
+    [ObservableProperty] private string _newWord = string.Empty;
     [ObservableProperty] private string _activePlayer = string.Empty;
+    [ObservableProperty] private char? _lastChar = null;
     
+    [ObservableProperty] private string _errorText = string.Empty;
+    [ObservableProperty] private bool _errorVisible = false;
+    
+    private int _playerNumber = 1;
+    private readonly MainWindowViewModel _mainWindow;
+    private readonly GameType _gameType;
+    private readonly Timer _timer;
+    private readonly ElapsedEventHandler _decreaseSeconds;
+    private readonly Timer _errorTimer;
+    private readonly ElapsedEventHandler _displayErrorMessage;
     private int _seconds = 30;
 
     public int Seconds
@@ -32,13 +44,6 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
             }
         }
     }
-    
-    private int _playerNumber = 1;
-    private readonly MainWindowViewModel _mainWindow;
-    private readonly GameType _gameType;
-    private char? _lastChar = null;
-    private readonly Timer _timer;
-    private readonly ElapsedEventHandler _decreaseSeconds;
     
     public GameScreenViewModel(MainWindowViewModel mainWindow, Game game)
     {
@@ -63,20 +68,42 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
         this._decreaseSeconds = (s, e) => Seconds--;
         this._timer.Elapsed += _decreaseSeconds;
         
+        // setup error timer
+        this._errorTimer = new Timer(4000);
+        this._displayErrorMessage = (s, e) =>
+        {
+            ErrorText = string.Empty;
+            ErrorVisible = false;
+            _errorTimer.Stop();
+            _errorTimer.Elapsed -= _displayErrorMessage;
+        };
+        
         // set the active player
         ActivePlayer = $"Hraje: Hráč {_playerNumber}";
         
         // start the timer
         _timer.Start();
     }
+
+    private void ShowError(string text)
+    {
+        ErrorText = text;
+        ErrorVisible = true;
+        _errorTimer.Elapsed += _displayErrorMessage;
+        _errorTimer.Start();
+    }
     
     public void Dispose()
     {
-        // Stop the timer and unsubscribe from the event to break the reference cycle.
         _timer.Stop();
         _timer.Elapsed -= _decreaseSeconds;
         _timer.Dispose();
-        Messages.Clear(); // Also clear the collection of controls.
+        
+        _errorTimer.Stop();
+        _errorTimer.Elapsed -= _displayErrorMessage;
+        _errorTimer.Dispose();
+        
+        Messages.Clear();
     }
     
     [RelayCommand]
@@ -94,12 +121,17 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
     }
 
     [RelayCommand]
-    private void Send()
+    private async void Send()
     {
         _timer.Stop();
         
         // create a new message and display it
-        AddMessage(NewWord);
+        // if the inputted new word is invalid, then the player continues
+        if (await AddMessage(NewWord) == false)
+        {
+            _timer.Start();
+            return;
+        }
         NewWord = string.Empty;
         
         // change the active player
@@ -111,13 +143,19 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
         _timer.Start();
     }
     
-    private async void AddMessage(string message)
+    private async Task<bool> AddMessage(string message)
     {
         if (string.IsNullOrWhiteSpace(message))
-            return;
-        
-        if(message.Last() != _lastChar && _lastChar != null)
-            return;
+        {
+            ShowError("Špatné slovo!");
+            return false;
+        }
+
+        if (message.First() != LastChar && LastChar != null)
+        {
+            ShowError("Slovo nezačíná správným písmenkem!");
+            return false;
+        }
 
         using (var db = new WordContext())
         {
@@ -125,12 +163,26 @@ public partial class GameScreenViewModel : ViewModelBase, IDisposable
             bool exists = await db.Words.AnyAsync(w => w.Word == word);
             if (exists)
             {
-                _lastChar = message.Last();
+                LastChar = message.Last();
                 Messages.Add(message);
+                
+                // remove error message
+                if (ErrorVisible)
+                {
+                    ErrorVisible = false;
+                    ErrorText = string.Empty;
+                    _errorTimer.Stop();
+                    _errorTimer.Elapsed -= _displayErrorMessage;
+                }
+                
+                return true;           
+            }
+            else
+            {
+                ShowError("Toto slovo neexistuje!");
+                return false;           
             }
         }
-        
-        //Messages.Add(message);
     }
 }
 
