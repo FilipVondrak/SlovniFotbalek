@@ -47,12 +47,13 @@
                         Padding="6" CornerRadius="12">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Poslední písmenko: " />
-                        <TextBlock Text="{Binding LastChar}"/>
+                        <TextBlock FontWeight="Bold" Text="{Binding LastChar}"/>
                     </StackPanel>
                 </Border>
             </Border>
         </Grid>
         
+        <!-- error message display -->
         <Grid Grid.Row="2">
             <Border HorizontalAlignment="Center" 
                     VerticalAlignment="Center" 
@@ -102,13 +103,24 @@
         </ScrollViewer>
         
         <!-- separator -->
-        <Separator Grid.Row="3"/>
         
         <!-- User input -->
-        <Grid ColumnDefinitions="*, 5, Auto" Grid.Row="4" Margin="5">
-            <TextBox Grid.Column="0" Text="{Binding NewWord}"/>
-            <Button Grid.Column="2" VerticalAlignment="Stretch" 
-                    Command="{Binding SendCommand}">Odeslat</Button>
-        </Grid>
+        <Border Grid.Row="4" Padding="5" Margin="5">
+            <Grid ColumnDefinitions="*, 5, Auto" >
+                <Grid.Styles>
+                    <Style Selector="TextBox">
+                        
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </Grid.Styles>
+                <Border Grid.Column="0" Background="LightGray" CornerRadius="10">
+                    <TextBox Text="{Binding NewWord}"/>
+                </Border>
+                <Button Grid.Column="2" VerticalAlignment="Stretch" CornerRadius="10" Background="DarkGray" 
+                        Command="{Binding SendCommand}">Odeslat</Button>
+            </Grid>
+        </Border>
+        
     </Grid>
 </UserControl>
